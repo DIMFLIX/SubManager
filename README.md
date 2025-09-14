@@ -155,9 +155,6 @@ This wizard will guide you through:
 
 It will then automatically create a `cron` job for you.
 
-<div align="center">
-	<img src="./img/cron_setup.png">
-</div>
 
 ### Removal
 
