@@ -100,6 +100,20 @@ send_notification() {
 # Change to script directory
 cd "$SCRIPT_DIR"
 
+# --- Activate Virtual Environment if it exists ---
+echo "Checking for virtual environment..." >> "$LOG_FILE"
+if [ -f "$SCRIPT_DIR/venv/bin/activate" ]; then
+    echo "Activating virtual environment: venv" >> "$LOG_FILE"
+    source "$SCRIPT_DIR/venv/bin/activate"
+elif [ -f "$SCRIPT_DIR/.venv/bin/activate" ]; then
+    echo "Activating virtual environment: .venv" >> "$LOG_FILE"
+    source "$SCRIPT_DIR/.venv/bin/activate"
+else
+    echo "No virtual environment found. Using python3 from PATH." >> "$LOG_FILE"
+    echo "Ensure required packages (aiofiles, etc.) are installed for the python3 in cron's PATH." >> "$LOG_FILE"
+fi
+# --- End of Virtual Environment Activation ---
+
 # Create temp file for output
 TEMP_OUTPUT=$(mktemp)
 
