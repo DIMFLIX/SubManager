@@ -1,127 +1,191 @@
 <div align="center">
 	<img src="./img/banner.jpg">
-    <h1>Subscribe to those who subscribe to you!</h1>
-      <a href="https://github.com/K1rsN7/SubManager/issues">
-		<img src="https://img.shields.io/github/issues/K1rsN7/SubManager?color=C0CBD1&labelColor=1F3B58&style=for-the-badge">
+    <h1>SubManager v2.0</h1>
+    <h2>Enhanced with Async/Await for Lightning-Fast Performance ⚡</h2>
+      <a href="https://github.com/DIMFLIX/SubManager/issues">
+		<img src="https://img.shields.io/github/issues/DIMFLIX/SubManager?color=C0CBD1&labelColor=1F3B58&style=for-the-badge">
 	</a>
-	<a href="https://github.com/K1rsN7/SubManager/stargazers">
-		<img src="https://img.shields.io/github/stars/K1rsN7/SubManager?color=C0CBD1&labelColor=1F3B58&style=for-the-badge">
+	<a href="https://github.com/DIMFLIX/SubManager/stargazers">
+		<img src="https://img.shields.io/github/stars/DIMFLIX/SubManager?color=C0CBD1&labelColor=1F3B58&style=for-the-badge">
 	</a>
 	<a href="./LICENSE">
-		<img src="https://img.shields.io/github/license/K1rsN7/SubManager?color=C0CBD1&labelColor=1F3B58&style=for-the-badge">
+		<img src="https://img.shields.io/github/license/DIMFLIX/SubManager?color=C0CBD1&labelColor=1F3B58&style=for-the-badge">
 	</a>
 </div>
+
 <h2 align="center">Project Description</h2>
-<p>SubManager is a powerful and user-friendly Python tool designed to automate the management of subscriptions in GitHub. In today's world where audience interaction is key, it's important to keep your subscriptions up to date and keep up to date with changes in your network of contacts.</p>
-<p>With SubManager, you can easily subscribe users who have subscribed to you and unsubscribe those who have decided to leave you. This makes it much easier to keep your subscription list up-to-date and allows you to focus on engaging with your audience rather than on mundane tasks.</p>
-<p>SubManager's key features include:</p>
-<ul>
-    <li><strong>Cross-platform:</strong> The script is written in Python and runs on a variety of operating systems including Windows, macOS and Linux, making it accessible to a wide audience.</li>
-    <li><strong>Automatic Subscription:</strong> The script automatically subscribes to all users who have subscribed to your account, so you don't miss out on new subscribers.</li>
-    <li><strong>Automatic unsubscribe:</strong> You can easily unsubscribe users who have unsubscribed from you, which helps keep your subscription list clean.</li>
-    <li><strong>Exceptions to the algorithm:</strong> SubManager provides the ability to use two files: <code>ban_list_followers.txt</code> and <code>ban_list_following.txt</code>. These files allow you to add users to a blacklist, excluding them from automatic subscriptions and unsubscriptions, giving you complete control over who you want to leave out of the automated process.</li>
-</ul>
+
+**SubManager** is a powerful Python tool designed to automate the management of your GitHub subscriptions. It intelligently synchronizes your followers and following lists, helping you grow your network and maintain a relevant feed.
+
+This rewritten version (v2.0) is fully asynchronous, using `aiohttp` and GitHub's official API for maximum speed and efficiency. It's faster, more reliable, and less prone to rate limiting.
+
+### Key Features:
+
+- **🚀 Fully Asynchronous:** Operations are performed concurrently for a significant speed boost.
+- **⚙️ Official API Usage:** Uses the GitHub API instead of HTML parsing for reliability and performance.
+- **🔧 Flexible YAML Configuration:** A single `.env.yaml` file to manage all settings, including authentication, promotion logic, and ban lists.
+- **🤖 Smart Promotion:** Discovers new users to follow based on the networks of your existing followers, helping you expand your reach.
+- **🛡️ Advanced Ban Lists:** Fine-grained control over who to follow, unfollow, or ignore completely.
+- **🔔 Cron & Desktop Notifications:** Includes easy-to-use scripts to set up automated execution with `cron` and receive desktop notifications summarizing the results.
+
+---
+
 <h2 align="center">Installation</h2>
-<ol>
-    <li><strong>Clone the repository:</strong>
-        <pre><code>git clone https://github.com/K1rsN7/SubManager.git
-cd SubManager</code></pre>
-    </li>
-    <li><strong>Customize the file <code>config.json</code>:</strong>
-    <p>Open the <code>config.json</code> file and change the following fields to your own:</p>
-    <pre><code>{
-    "USERNAME": "Your username", 
-    "TOKEN": "Your token",
-    "PROMOTION": true,
-    "DAYS_PERIOD": 3,
-    "COUNT_PROMOTION_USERS": 500,
-    "RETRY_ON": true
-}
-</code></pre>
-    <p>If you are unsure how to generate a personal access token, please refer to the documentation at <a href="./Docs/Generate Token.md">Generate Token.md</a> for detailed instructions.</p>
-</li>
 
-</ol>
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/DIMFLIX/SubManager.git
+    cd SubManager
+    ```
 
-<h2 align="center">Running the program</h2>
-<p>To run the program manually, run the following command in the terminal:</p>
-<pre><code>python3 main.py</code></pre>
+2.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-<h2 align="center">Startup automation</h2>
-<p>To automate the launch of the SubManager script, follow these steps depending on your operating system:</p>
+3.  **Create your configuration file:**
+    Copy the example configuration file to create your own.
+    ```bash
+    cp .env.yaml.example .env.yaml
+    ```
 
-<h3>For Linux or macOS</h3>
-<ol>
-    <li>Open crontab for editing:
-        <pre><code>sudo crontab -e</code></pre>
-    </li>
-    <li>Add the following line to the crontab file:
-        <pre><code>0 */2 * * * /usr/bin/python3 GLOBAL_PATH/main.py</code></pre>
-        <p>Replace <code>GLOBAL_PATH</code> to the full path to the <code>main.py</code> file.</p>
-    </li>
-    <li>Save your changes and exit the editor.</li>
-</ol>
+4.  **Edit your configuration:**
+    Open `.env.yaml` with your favorite text editor and fill in your details, especially your GitHub `username` and `token`.
 
-<h3>For Windows</h3>
-<ol>
-    <li><strong>Open the Task Scheduler:</strong>
-        <ul>
-            <li>Press <strong>Windows + R</strong>, then type <code>taskschd.msc</code> and press Enter.</li>
-        </ul>
-    </li>
-    <li><strong>Create a new task:</strong>
-        <ul>
-            <li>In the right pane, select <strong>Create Task</strong>.</li>
-        </ul>
-    </li>
-    <li><strong>Configure the general settings:</strong>
-        <ul>
-            <li>Enter the name of the task and a description.</li>
-            <li>Make sure that the correct version of Windows is selected in the <strong>Configuration for</strong> field.</li>
-        </ul>
-    </li>
-    <li><strong>Set Trigger:</strong>
-        <ul>
-            <li>Go to the <strong>Triggers</strong> tab and click <strong>Create</strong>.</li>
-            <li>Select <strong>Schedule</strong>.</li>
-            <li>Set the frequency to <strong>Every 2 hours</strong>. To do this, you can select “Daily” and then specify the execution interval.</li>
-        </ul>
-    </li>
-    <li><strong>Customize the action:</strong>
-        <ul>
-            <li>Go to the <strong>Actions</strong> tab and click <strong>Create</strong>.</li>
-            <li><strong>Select Run Program</strong>.</li>
-            <li><p><strong>In the “Program or Script”</strong> field, specify the path to the Python interpreter, for example:</p>
-                <pre><code>C:\Path\To\Python\python.exe</code></pre></li>
-            <li><p><strong>In the “Arguments”</strong> field, specify the path to your script:</p>
-                <pre><code>C:\Path\To\Your\Script\main.py</code></pre></li>
-        </ul>
-    </li>
-    <li><strong>Save the task:</strong>
-        <ul>
-            <li><p>Click “OK” to save the task settings.</p></li>
-        </ul>
-    </li>
-</ol>
+    > **Important:** To generate a personal access token, follow the official GitHub documentation. Make sure to grant the `read:user` and `write:user` scopes.
+
+---
+
+<h2 align="center">Configuration (.env.yaml)</h2>
+
+All settings are managed in the `.env.yaml` file. Here’s a breakdown:
+
+```yaml
+# GitHub Authentication
+github:
+  username: "YOUR_GITHUB_USERNAME"
+  token: "ghp_YOUR_GITHUB_PERSONAL_ACCESS_TOKEN"
+
+# Promotion Settings
+promotion:
+  enabled: true
+  days_period: 3      # Days to keep a promoted user before they can be unfollowed
+  count_users: 500    # Target number of promoted users to maintain
+
+# Advanced Settings
+settings:
+  retry_on_error: true
+  max_concurrent_requests: 5 # Concurrent API requests
+  request_delay: 0.5       # Delay between batches of requests
+  batch_size: 5            # Users to process in each batch
+
+# Ban Lists (Exclusion Rules)
+ban_lists:
+  # Users you will NEVER unfollow, even if they don't follow you back.
+  # Ideal for important contacts, organizations, or projects.
+  never_unfollow:
+    - "octocat"
+    - "torvalds"
+  
+  # Users you will NEVER follow, even if they follow you.
+  # Useful for ignoring specific accounts (e.g., bots).
+  never_follow:
+    - "spammer123"
+  
+  # Users to be completely ignored. They won't be followed, and they won't
+  # be counted as followers for the purpose of following back.
+  ignore_completely: []
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: "subscription_manager.log"
+```
+
+---
+
+<h2 align="center">Usage</h2>
+
+#### Run Subscription Management
+
+To run the full follow/unfollow process:
+
+```bash
+python3 main.py
+```
+
+#### Show Statistics
+
+To view your current follower/following statistics without performing any actions:
+
+```bash
+python3 main.py --stats
+```
+
+---
+
+<h2 align="center">Automation with Cron and Notifications</h2>
+
+Easily automate the script to run on a schedule with desktop notifications on Linux.
+
+#### Requirements
+
+For desktop notifications, you need `libnotify`.
+
+```bash
+# For Arch / EndeavourOS
+sudo pacman -S libnotify
+
+# For Debian / Ubuntu
+sudo apt-get install libnotify-bin
+```
+
+### Interactive Setup
+
+An interactive script is included to make setup a breeze.
+
+```bash
+./setup_cron.sh
+```
+
+This wizard will guide you through:
+
+1.  **Choosing an execution schedule** (e.g., every 2 hours, once a day).
+2.  **Enabling or disabling desktop notifications.**
+
+It will then automatically create a `cron` job for you.
+
+<div align="center">
+	<img src="./img/cron_setup.png">
+</div>
+
+### Removal
+
+To remove the cron job, simply run the removal script:
+
+```bash
+./remove_cron.sh
+```
+
+This script will ask for confirmation before deleting the cron job and associated log files.
+
+### Manual Testing
+
+- **Test the wrapper script (which cron runs):**
+  ```bash
+  ./cron_wrapper.sh
+  ```
+- **Test notifications and statistics parsing:**
+  ```bash
+  ./test_notifications.sh
+  ```
+
+---
 
 <h2 align="center">License</h2>
-<p>This project is licensed under the <a href=“./LICENSE”>MIT License</a>. The MIT License is one of the most popular and simple open source licenses. It allows you to:</p>
-<ul>
-    <li><strong>Use:</strong> You can use the project code in your own projects, whether personal or commercial.</li>
-    <li><strong>Modify:</strong> You can modify the project code, adapting it to your needs or improving functionality.</li>
-    <li><strong>Distribute:</strong> You can distribute the original code or your own modifications, and you must specify the authorship of the original project.</li>
-</ul>
-<p>It is important to note that the license does not provide any warranty, and the authors are not responsible for any problems that may occur when using the code.</p>
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
 <h2 align="center">Contacts</h2>
-<p>If you have any questions, suggestions or would like to discuss the project, please contact me via Telegram: <a href="https://t.me/K1rsN7">@K1rsN7</a>.</p>
-<p>I'm always happy to hear feedback and suggestions for improving the project. Your support and ideas will help me make SubManager even better!
 
-<h2 align="center"> Star History</h2>
-<a href="https://star-history.com/#K1rsN7/SubManager&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=K1rsN7/SubManager&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=K1rsN7/SubManager&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=K1rsN7/SubManage&type=Date" />
- </picture>
-</a>
+If you have any questions, suggestions or would like to discuss the project, please contact me via Telegram: <a href="https://t.me/dimflix_official">@dimflix_official</a>.
