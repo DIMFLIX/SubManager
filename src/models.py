@@ -15,6 +15,10 @@ class Config:
     days_period: int = 3
     count_promotion_users: int = 500
     retry_on: bool = True
+    # Promotion discovery tuning
+    seeds_count: int = 5           # how many random followers to use as seeds per run
+    pages_per_seed: int = 2        # how many follower pages to sample per seed
+    max_random_page: int = 5       # max page number to sample (GitHub paginates by 100)
     
     @classmethod
     def from_dict(cls, data: dict) -> 'Config':
@@ -25,7 +29,10 @@ class Config:
             promotion=data.get('PROMOTION', True),
             days_period=data.get('DAYS_PERIOD', 3),
             count_promotion_users=data.get('COUNT_PROMOTION_USERS', 500),
-            retry_on=data.get('RETRY_ON', True)
+            retry_on=data.get('RETRY_ON', True),
+            seeds_count=data.get('SEEDS_COUNT', 5),
+            pages_per_seed=data.get('PAGES_PER_SEED', 2),
+            max_random_page=data.get('MAX_RANDOM_PAGE', 5)
         )
 
 

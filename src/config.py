@@ -51,13 +51,20 @@ class ConfigManager:
                 data = yaml.safe_load(content)
             
             # Convert YAML structure to Config
+            promotion_cfg = data.get('promotion', {})
+            settings_cfg = data.get('settings', {})
+
             config_data = {
                 'USERNAME': data['github']['username'],
                 'TOKEN': data['github']['token'],
-                'PROMOTION': data['promotion']['enabled'],
-                'DAYS_PERIOD': data['promotion']['days_period'],
-                'COUNT_PROMOTION_USERS': data['promotion']['count_users'],
-                'RETRY_ON': data['settings'].get('retry_on_error', True)
+                'PROMOTION': promotion_cfg.get('enabled', True),
+                'DAYS_PERIOD': promotion_cfg.get('days_period', 3),
+                'COUNT_PROMOTION_USERS': promotion_cfg.get('count_users', 500),
+                'RETRY_ON': settings_cfg.get('retry_on_error', True),
+                # New promotion discovery tuning
+                'SEEDS_COUNT': promotion_cfg.get('seeds_count', 5),
+                'PAGES_PER_SEED': promotion_cfg.get('pages_per_seed', 2),
+                'MAX_RANDOM_PAGE': promotion_cfg.get('max_random_page', 5),
             }
             
             self.config = Config.from_dict(config_data)
@@ -107,6 +114,14 @@ class ConfigManager:
             
         if self.config.count_promotion_users < 0:
             raise ValueError("COUNT_PROMOTION_USERS cannot be negative")
+        
+        # Validate new promotion discovery settings
+        if self.config.seeds_count < 1:
+            raise ValueError("seeds_count must be >= 1")
+        if self.config.pages_per_seed < 1:
+            raise ValueError("pages_per_seed must be >= 1")
+        if self.config.max_random_page < 1:
+            raise ValueError("max_random_page must be >= 1")
             
     async def save(self, config: Optional[Config] = None):
         """
@@ -126,10 +141,14 @@ class ConfigManager:
                 'username': self.config.username,
                 'token': self.config.token
             },
-            'promotion': {
+'promotion': {
                 'enabled': self.config.promotion,
                 'days_period': self.config.days_period,
-                'count_users': self.config.count_promotion_users
+                'count_users': self.config.count_promotion_users,
+                # Promotion discovery tuning
+                'seeds_count': self.config.seeds_count,
+                'pages_per_seed': self.config.pages_per_seed,
+                'max_random_page': self.config.max_random_page,
             },
             'settings': {
                 'retry_on_error': self.config.retry_on,

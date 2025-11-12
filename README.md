@@ -71,6 +71,10 @@ promotion:
   enabled: true
   days_period: 3      # Days to keep a promoted user before they can be unfollowed
   count_users: 500    # Target number of promoted users to maintain
+  # Discovery tuning:
+  seeds_count: 5       # how many random followers to use as seeds per run
+  pages_per_seed: 2    # how many follower pages to sample for each seed
+  max_random_page: 5   # max page number to sample (each page = up to 100 users)
 
 # Advanced Settings
 settings:

@@ -38,13 +38,13 @@ class PromotionManager:
         max_depth: int = 2
     ) -> List[str]:
         """
-        Find new users to promote (follow) based on followers' networks.
+        Find new users to promote (follow) based on a random follower's network.
         
-        This implements a breadth-first search through followers' followers
-        to find users that might be interested in following back.
+        This picks a random user from your followers and explores their followers
+        to find potential users to follow back.
         
         Args:
-            current_followers: Set of current followers
+            current_followers: Set of your current followers
             ban_list: Set of users to exclude
             count: Number of users to find
             max_depth: Maximum depth to search (1 = direct followers, 2 = followers of followers)
@@ -52,14 +52,23 @@ class PromotionManager:
         Returns:
             List of usernames to promote
         """
-        logger.info(f"Starting promotion search for {count} users")
+        import random
+        
+        logger.info(f"Starting promotion search for {count} users from a random follower")
         
         promoted = []
         visited = set()
         excluded = ban_list | current_followers | {self.config.username}
         
-        # Create a queue for BFS
-        queue = list(current_followers)[:min(30, len(current_followers))]  # Limit initial queue to reduce API calls
+        # Pick several random followers as seeds (if available)
+        followers_list = list(current_followers)
+        if not followers_list:
+            logger.info("No followers available to seed promotion search")
+            return []
+        
+        seeds_count = min(self.config.seeds_count, len(followers_list))  # number of random seeds per run
+        random.shuffle(followers_list)
+        queue = followers_list[:seeds_count]
         current_depth = 0
         
         while queue and len(promoted) < count and current_depth < max_depth:
@@ -81,9 +90,16 @@ class PromotionManager:
                 
                 # Get followers for batch of users concurrently
                 try:
+                    # For each seed, pick random follower pages to diversify results
+                    max_random_page = max(1, int(self.config.max_random_page))  # heuristic upper bound; empty pages are skipped
+                    pages_per_seed = max(1, int(self.config.pages_per_seed))   # how many different pages to sample per seed
+                    pages_map = {
+                        u: sorted({p for p in random.sample(range(1, max_random_page + 1), k=min(pages_per_seed, max_random_page))})
+                        for u in batch
+                    }
                     followers_dict = await self.client.get_followers_batch(
-                        batch, 
-                        max_pages=1  # Only get first page to speed up
+                        batch,
+                        pages_map=pages_map
                     )
                     
                     for username, followers in followers_dict.items():
@@ -211,7 +227,7 @@ class PromotionManager:
                 current_followers,
                 ban_list,
                 needed_count,
-                max_depth=2
+                max_depth=1
             )
             
             if new_promoted:

@@ -114,44 +114,57 @@ class GitHubClient:
     async def get_followers(
         self, 
         username: Optional[str] = None,
-        max_pages: Optional[int] = None
+        max_pages: Optional[int] = None,
+        pages: Optional[List[int]] = None
     ) -> List[str]:
         """
         Get list of followers for a user.
         
         Args:
             username: GitHub username (defaults to authenticated user)
-            max_pages: Maximum number of pages to fetch
+            max_pages: Maximum number of pages to fetch (from page 1)
+            pages: Specific page numbers to fetch (overrides max_pages if provided)
             
         Returns:
             List of follower usernames
         """
         username = username or self.username
-        followers = []
-        page = 1
+        followers: List[str] = []
         
+        # If explicit pages are provided, fetch only those
+        if pages:
+            seen_pages = sorted({p for p in pages if isinstance(p, int) and p > 0})
+            for page in seen_pages:
+                params = {'per_page': self.PER_PAGE, 'page': page}
+                data = await self._make_request(
+                    'GET',
+                    f'/users/{username}/followers',
+                    params=params
+                )
+                if not data:
+                    continue
+                followers.extend([user['login'] for user in data])
+            logger.info(f"Fetched {len(followers)} followers for {username} using specific pages {seen_pages}")
+            return followers
+        
+        # Default sequential pagination from page 1
+        page = 1
         while True:
             if max_pages and page > max_pages:
                 break
-                
             params = {'per_page': self.PER_PAGE, 'page': page}
             data = await self._make_request(
                 'GET',
                 f'/users/{username}/followers',
                 params=params
             )
-            
             if not data:
                 break
-                
             followers.extend([user['login'] for user in data])
-            
-            # If we got less than PER_PAGE items, we've reached the end
             if len(data) < self.PER_PAGE:
                 break
-                
             page += 1
-            
+        
         logger.info(f"Fetched {len(followers)} followers for {username}")
         return followers
         
@@ -328,25 +341,32 @@ class GitHubClient:
             logger.error(f"Failed to get user info for {username}: {e}")
             return None
             
-    async def get_followers_batch(self, usernames: List[str], max_pages: int = 1) -> Dict[str, List[str]]:
+    async def get_followers_batch(self, usernames: List[str], max_pages: int = 1, pages: Optional[List[int]] = None, pages_map: Optional[Dict[str, List[int]]] = None) -> Dict[str, List[str]]:
         """
         Get followers for multiple users concurrently.
         
         Args:
             usernames: List of usernames
-            max_pages: Maximum pages per user
+            max_pages: Maximum pages per user (used if pages/pages_map not provided)
+            pages: Same specific pages for all usernames
+            pages_map: Per-username pages mapping to fetch different pages for each user
             
         Returns:
             Dictionary mapping username to list of followers
         """
-        tasks = [
-            self.get_followers(username, max_pages=max_pages)
-            for username in usernames
-        ]
+        tasks = []
+        for username in usernames:
+            user_pages = None
+            if pages_map and username in pages_map:
+                user_pages = pages_map[username]
+            elif pages:
+                user_pages = pages
+            task = self.get_followers(username, max_pages=None if user_pages else max_pages, pages=user_pages)
+            tasks.append(task)
         
         results = await asyncio.gather(*tasks, return_exceptions=True)
         
-        followers_dict = {}
+        followers_dict: Dict[str, List[str]] = {}
         for username, result in zip(usernames, results):
             if isinstance(result, Exception):
                 logger.error(f"Error getting followers for {username}: {result}")
